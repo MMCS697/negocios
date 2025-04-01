@@ -1,0 +1,104 @@
+const questions = [
+  {
+    question: "¿Qué es la ley aduanera?",
+    options: [
+      "Un conjunto de normas sobre comercio exterior",
+      "Regulaciones internas de una empresa",
+      "Reglas para la importación de productos en un país"
+    ],
+    correct: 0
+  },
+  {
+    question: "¿Cuál es la función de la aduana?",
+    options: [
+      "Controlar el paso de mercancías entre fronteras",
+      "Vigilar los impuestos internos",
+      "Revisar los productos de consumo nacional"
+    ],
+    correct: 0
+  },
+  // ... Añadir más preguntas hasta completar 12
+];
+
+let currentQuestion = 0;
+let score = 0;
+
+function loadQuestion() {
+  const questionElement = document.getElementById('question');
+  const answersList = document.getElementById('answers');
+  const nextButton = document.getElementById('next-btn');
+  
+  questionElement.textContent = questions[currentQuestion].question;
+  
+  answersList.innerHTML = '';
+  questions[currentQuestion].options.forEach((option, index) => {
+    const li = document.createElement('li');
+    const button = document.createElement('button');
+    button.textContent = option;
+    button.classList.add('answer-btn');
+    button.onclick = () => checkAnswer(index);
+    li.appendChild(button);
+    answersList.appendChild(li);
+  });
+  
+  nextButton.disabled = true;
+}
+
+function checkAnswer(selectedIndex) {
+  const nextButton = document.getElementById('next-btn');
+  const answerButtons = document.querySelectorAll('.answer-btn');
+  
+  // Desactivar los botones después de seleccionar la respuesta
+  answerButtons.forEach((button, index) => {
+    if (index === selectedIndex) {
+      if (index === questions[currentQuestion].correct) {
+        button.classList.add('correct');
+        score++;
+      } else {
+        button.classList.add('incorrect');
+      }
+    } else {
+      if (index === questions[currentQuestion].correct) {
+        button.classList.add('correct');
+      }
+    }
+  });
+  
+  nextButton.disabled = false;
+}
+
+function nextQuestion() {
+  const nextButton = document.getElementById('next-btn');
+  currentQuestion++;
+  
+  if (currentQuestion < questions.length) {
+    loadQuestion();
+  } else {
+    showResults();
+  }
+  
+  nextButton.disabled = true;
+}
+
+function showResults() {
+  const questionContainer = document.getElementById('question-container');
+  const scoreContainer = document.getElementById('score-container');
+  const scoreText = document.getElementById('score');
+  const feedbackText = document.getElementById('feedback');
+  
+  questionContainer.classList.add('hidden');
+  scoreContainer.classList.remove('hidden');
+  
+  scoreText.textContent = `Puntaje total: ${score} de ${questions.length}`;
+  
+  if (score === questions.length) {
+    feedbackText.textContent = "¡Excelente! Has respondido todas las preguntas correctamente.";
+  } else if (score >= questions.length / 2) {
+    feedbackText.textContent = "Buen trabajo, pero aún hay áreas para mejorar.";
+  } else {
+    feedbackText.textContent = "Necesitas estudiar más sobre la ley aduanera.";
+  }
+}
+
+// Cargar la primera pregunta al iniciar
+window.onload = loadQuestion;
